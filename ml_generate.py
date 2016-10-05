@@ -17,6 +17,11 @@ train data works in above order
 #Initialize the classifier
 clf = GaussianNB()
 
+try:
+	clf = joblib.load('data_generated.pkl')
+except:
+	pass
+
 single_train_data = [-1,-1,-1,-1]
 
 #to store when the last click occured 
@@ -33,10 +38,15 @@ def generateReply(playery, playerVelY, pipeHeight, pipeX):
 	single_train_data = [playery, playerVelY, pipeHeight, pipeX]
 
 	try:
-		result = clf.predict()
+		result = clf.predict(np.array([single_train_data]))
+		
+		print "Using fit data"
+
 		return result
 
 	except:
+
+		print "Using random data"
 
 		if random.random() <0.5:
 			return 1
@@ -49,7 +59,10 @@ def generateData(result):
 
 	global features_train, labels_train
 
-	result = ~(result)
+	if result == False:
+		result = True
+	else:
+		result = False
 
 	features_train.append(single_train_data)
 	labels_train.append(result)
