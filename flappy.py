@@ -4,7 +4,7 @@ import sys
 
 import pygame
 from pygame.locals import *
-from ml_generate import generateReply, generateData, fit_mldata
+from ml_generate import generateReply, generateData, fit_mldata, put_user_data
 
 FPS = 30
 SCREENWIDTH  = 288
@@ -225,22 +225,27 @@ def mainGame(movementInfo):
 
     while True:
         
-        '''
+        click = 0
+
         for event in pygame.event.get():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
                 sys.exit()
             
             if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
+                click = 1
                 if playery > -2 * IMAGES['player'][0].get_height():
                     playerVelY = playerFlapAcc
                     playerFlapped = True
                     SOUNDS['wing'].play()
-        '''    
+            
                     
         #Linking with Machine Learning
-        click = generateReply(playery, playerVelY, upperPipes[0]['y'], upperPipes[0]['x'])
+        #click = generateReply(playery, playerVelY, upperPipes[0]['y'], upperPipes[0]['x'])
         
+        put_user_data(playery, playerVelY, upperPipes[0]['y'], upperPipes[0]['x'], click)
+
+        '''
         if click:
 
             if playery > -2 * IMAGES['player'][0].get_height():
@@ -248,13 +253,14 @@ def mainGame(movementInfo):
                 playerVelY = playerFlapAcc
                 playerFlapped = True
                 SOUNDS['wing'].play()
+        '''
 
         # check for crash here
         crashTest = checkCrash({'x': playerx, 'y': playery, 'index': playerIndex},
                                upperPipes, lowerPipes)
         
         #Machine Learning return result
-        generateData(crashTest[0])
+        #generateData(crashTest[0])
 
         if crashTest[0]:
             

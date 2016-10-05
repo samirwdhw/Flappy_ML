@@ -80,3 +80,13 @@ def fit_mldata():
 	joblib.dump(clf, 'data_generated.pkl')
 
 	print "Data fitted"
+
+	features_train = []
+	labels_train = []
+
+def put_user_data(playery, playerVelY, pipeHeight, pipeX, result):
+
+	global features_train, labels_train
+
+	features_train.append([playery, playerVelY, pipeHeight, pipeX])
+	labels_train.append(result)
