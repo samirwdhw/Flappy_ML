@@ -25,7 +25,7 @@ lastclick = 0
 features_train = []
 labels_train = []
 
-def generateReply(playery, playerVelY, pipeHeight, pipeX, time_elap):
+def generateReply(playery, playerVelY, pipeHeight, pipeX):
 	#To return the new data after processing
 	
 	global single_train_data
@@ -49,13 +49,15 @@ def generateData(result):
 
 	global features_train, labels_train
 
-	result = !(result)
+	result = ~(result)
 
 	features_train.append(single_train_data)
 	labels_train.append(result)
 
 
 def fit_mldata():
+
+	global features_train, labels_train
 
 	features_train = np.array(features_train)
 	labels_train = np.array(labels_train)
