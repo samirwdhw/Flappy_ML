@@ -4,7 +4,7 @@ import sys
 
 import pygame
 from pygame.locals import *
-
+from ml_generate import generateReply, generateData, fit_mldata
 
 FPS = 30
 SCREENWIDTH  = 288
@@ -130,6 +130,8 @@ def main():
         showGameOverScreen(crashInfo)
 
 
+
+
 def showWelcomeAnimation():
     """Shows welcome screen animation of flappy bird"""
     # index of player to blit on screen
@@ -156,7 +158,8 @@ def showWelcomeAnimation():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
                 sys.exit()
-            if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
+            #if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
+            if True: 
                 # make first flap sound and return values for mainGame
                 SOUNDS['wing'].play()
                 return {
@@ -165,7 +168,7 @@ def showWelcomeAnimation():
                     'playerIndexGen': playerIndexGen,
                 }
 
-        # adjust playery, playerIndex, basex
+    # adjust playery, playerIndex, basex
         if (loopIter + 1) % 5 == 0:
             playerIndex = playerIndexGen.next()
         loopIter = (loopIter + 1) % 30
@@ -187,6 +190,8 @@ def mainGame(movementInfo):
     score = playerIndex = loopIter = 0
     playerIndexGen = movementInfo['playerIndexGen']
     playerx, playery = int(SCREENWIDTH * 0.2), movementInfo['playery']
+
+    print movementInfo
 
     basex = movementInfo['basex']
     baseShift = IMAGES['base'].get_width() - IMAGES['background'].get_width()
@@ -219,20 +224,42 @@ def mainGame(movementInfo):
 
 
     while True:
+        
+        '''
         for event in pygame.event.get():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
                 sys.exit()
+            
             if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
                 if playery > -2 * IMAGES['player'][0].get_height():
                     playerVelY = playerFlapAcc
                     playerFlapped = True
                     SOUNDS['wing'].play()
+        '''    
+                    
+        #Linking with Machine Learning
+        click = generateReply(playery, playerVelY, upperPipes[0]['y'], upperPipes[0]['x'])
+        
+        if click:
+
+            if playery > -2 * IMAGES['player'][0].get_height():
+                
+                playerVelY = playerFlapAcc
+                playerFlapped = True
+                SOUNDS['wing'].play()
 
         # check for crash here
         crashTest = checkCrash({'x': playerx, 'y': playery, 'index': playerIndex},
                                upperPipes, lowerPipes)
+        
+        #Machine Learning return result
+        generateData(crashTest[0])
+
         if crashTest[0]:
+            
+            fit_mldata()
+
             return {
                 'y': playery,
                 'groundCrash': crashTest[1],
@@ -316,6 +343,8 @@ def showGameOverScreen(crashInfo):
         SOUNDS['die'].play()
 
     while True:
+        
+
         for event in pygame.event.get():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
